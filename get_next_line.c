@@ -1,92 +1,80 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jprevota <jprevota@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/03/16 14:59:53 by jprevota          #+#    #+#             */
-/*   Updated: 2017/10/10 14:26:30 by jprevota         ###   ########.fr       */
+/*   Created: 2016/11/28 16:44:38 by jprevota          #+#    #+#             */
+/*   Updated: 2017/04/20 15:56:30 by admin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./get_next_line.h"
+#include "get_next_line.h"
 
-static int	check_nl(char *str)
+static size_t	find_nl(char *str)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < ft_strlen(str))
-	{
-		if (str[i] == '\n')
-			return (i);
+	while (str[i] != '\n' && str[i] != '\0')
 		i++;
-	}
-	return (-1);
+	return (i);
 }
 
-static char	*str_memcat(char *mem1, char *mem2, size_t size, int reset)
+static char		*str_memcat(char *s1, char *s2, size_t size1, int size2)
 {
 	char	*tmp;
+	size_t	size;
 
-	if (!(tmp = (char *)malloc(ft_strlen(mem1) + size + 1)))
+	size = size1 + size2 + 1;
+	if (!(tmp = (char *)malloc(size * sizeof(char))))
 		return (NULL);
-	ft_memset(tmp, '\0', (size_t)(ft_strlen(mem1) + size + 1));
-	ft_memcpy(tmp, mem1, ft_strlen(mem1));
-	ft_memcpy(tmp + ft_strlen(mem1), mem2, size);
-	tmp[ft_strlen(mem1) + size] = '\0';
-	if (reset == 1)
-		ft_memset(mem2, '\0', 256);
-	if (mem1 != NULL)
-		free(mem1);
+	ft_memcpy(tmp, s1, size1);
+	ft_memcpy(tmp + size1, s2, size2);
+	tmp[size1 + size2] = '\0';
 	return (tmp);
 }
 
-static int	fill_buffer(int fd, char *buff)
+static char		*set_buff_end(char *buff_end, size_t i)
 {
-	int		ret;
-
-	if ((ret = read(fd, buff, BUFF_SIZE)) == -1)
-		return (-1);
-	buff[ret] = '\0';
-	return (ret);
-}
-
-static int	gnl(char **line, const int fd, int ret)
-{
-	static char	buff_end[256];
-	int			i;
-
-	while (ret > 0)
+	if (i != ft_strlen(buff_end))
 	{
-		if ((i = check_nl(buff_end)) >= 0)
-		{
-			*line = str_memcat(*line, buff_end, i, 0);
-			ft_strcpy(buff_end, buff_end + i + 1);
-			return (1);
-		}
-		if (ft_strlen(buff_end) + BUFF_SIZE + 1 > 256)
-			*line = str_memcat(*line, buff_end, ft_strlen(buff_end), 1);
-		if ((ret = fill_buffer(fd, buff_end + ft_strlen(buff_end))) == -1)
-			return (-1);
-		if (ret == 0 && ft_strlen(buff_end) > 0)
-		{
-			*line = str_memcat(*line, buff_end, ft_strlen(buff_end), 1);
-			return (1);
-		}
+		ft_strcpy(buff_end, buff_end + i + 1);
+		return (buff_end);
 	}
-	return (0);
+	if (i > 0)
+	{
+		buff_end[0] = '\0';
+		return (buff_end);
+	}
+	return (NULL);
 }
 
-int			get_next_line(const int fd, char **line)
+int				get_next_line(int const fd, char **line)
 {
-	int		ret;
+	static char	*buff_end[1024];
+	char		buff[BUFF_SIZE + 1];
+	char		*tmp;
+	size_t		i;
+	int			ret;
 
-	ret = 1;
-	if (!line || !(*line = (char *)malloc(BUFF_SIZE + 1 * sizeof(char)))
-		|| fd < 0)
+	if (fd < 0 || BUFF_SIZE < 1 || !line || read(fd, buff, 0) < 0)
 		return (-1);
-	ft_memset(*line, '\0', (size_t)(BUFF_SIZE + 1));
-	return (gnl(line, fd, ret));
+	if (!(buff_end[fd]) && (buff_end[fd] = ft_strnew(0)) == NULL)
+		return (-1);
+	i = 0;
+	while (!(ft_strchr(buff_end[fd] + i, '\n'))
+		&& (ret = read(fd, buff, BUFF_SIZE)) > 0)
+	{
+		buff[ret] = '\0';
+		tmp = buff_end[fd];
+		if (!(buff_end[fd] = str_memcat(tmp, buff, i, ret)))
+			return (-1);
+		i = i + ret;
+		free(tmp);
+	}
+	i = find_nl(buff_end[fd]);
+	*line = ft_strsub(buff_end[fd], 0, i);
+	return ((set_buff_end(buff_end[fd], i) == NULL)) ? 0 : 1;
 }
