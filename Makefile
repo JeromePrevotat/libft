@@ -3,7 +3,7 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jprevota <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: jprevota <jprevota@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/03 19:00:31 by jprevota          #+#    #+#              #
 #    Updated: 2016/11/26 17:07:39 by jprevota         ###   ########.fr        #
@@ -12,6 +12,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra
+MAKE = make
 NAME = libft.a
 
 SRCS += ./ft_isalpha.c
@@ -95,17 +96,23 @@ INC += ./get_next_line.h
 
 OBJ = $(SRCS:.c=.o)
 
-all: $(NAME)
+.PHONY : ft_printf clean fclean
+
+all: ft_printf $(NAME)
+
+ft_printf:
+	cd ./ft_printf && $(MAKE)
 
 $(NAME): $(OBJ) $(INC)
 	ar -rc $(NAME) $(OBJ)
 	ranlib $(NAME)
 
-.PHONY: clean
 clean:
+	cd ./ft_printf && $(MAKE) clean
 	rm -rf $(OBJ)
 
 fclean: clean
+	cd ./ft_printf && $(MAKE) fclean
 	rm -rf $(NAME)
 
 re:	fclean all
