@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jprevota <jprevota@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/28 16:44:38 by jprevota          #+#    #+#             */
-/*   Updated: 2017/04/20 15:56:30 by admin            ###   ########.fr       */
+/*   Updated: 2017/11/08 19:51:47 by jprevota         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static size_t	find_nl(char *str)
 	return (i);
 }
 
-static char		*str_memcat(char *s1, char *s2, size_t size1, int size2)
+static char		*str_mcat(char *s1, char *s2, size_t size1, int size2)
 {
 	char	*tmp;
 	size_t	size;
@@ -69,7 +69,7 @@ int				get_next_line(int const fd, char **line)
 	{
 		buff[ret] = '\0';
 		tmp = buff_end[fd];
-		if (!(buff_end[fd] = str_memcat(tmp, buff, i, ret)))
+		if (!(buff_end[fd] = str_mcat(tmp, buff, i, ret)))
 			return (-1);
 		i = i + ret;
 		free(tmp);
