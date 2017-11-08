@@ -6,11 +6,20 @@
 #    By: jprevota <jprevota@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/03 19:00:31 by jprevota          #+#    #+#              #
-#    Updated: 2016/11/26 17:07:39 by jprevota         ###   ########.fr        #
+#    Updated: 2017/11/08 21:07:03 by jprevota         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
+RED = \x1b[31m
+GREY = \x1b[30m
+GREEN = \x1b[32m
+YELLOW = \x1b[33m
+BLUE = \x1b[34m
+PURPLE = \x1b[35m
+CYAN = \x1b[36m
+WHITE = \x1b[37m
+
+CC = @gcc
 CFLAGS = -Wall -Werror -Wextra
 MAKE = make
 NAME = libft.a
@@ -101,18 +110,20 @@ OBJ = $(SRCS:.c=.o)
 all: ft_printf $(NAME)
 
 ft_printf:
-	cd ./ft_printf && $(MAKE)
+	@cd ./ft_printf && $(MAKE)
 
 $(NAME): $(OBJ) $(INC)
-	ar -rc $(NAME) $(OBJ)
-	ranlib $(NAME)
+	@echo "$(BLUE)>>$(WHITE) Building $(NAME) $(BLUE)<<$(WHITE)"
+	@ar -rc $(NAME) $(OBJ)
+	@ranlib $(NAME)
+	@echo "$(GREEN)SUCCESS$(WHITE)"
 
 clean:
-	cd ./ft_printf && $(MAKE) clean
+	@cd ./ft_printf && $(MAKE) clean
 	rm -rf $(OBJ)
 
 fclean: clean
-	cd ./ft_printf && $(MAKE) fclean
+	@cd ./ft_printf && $(MAKE) fclean
 	rm -rf $(NAME)
 
 re:	fclean all

@@ -1,4 +1,25 @@
-CC = gcc
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: jprevota <jprevota@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2017/11/08 20:34:55 by jprevota          #+#    #+#              #
+#    Updated: 2017/11/08 21:06:37 by jprevota         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+RED = \x1b[31m
+GREY = \x1b[30m
+GREEN = \x1b[32m
+YELLOW = \x1b[33m
+BLUE = \x1b[34m
+PURPLE = \x1b[35m
+CYAN = \x1b[36m
+WHITE = \x1b[37m
+
+CC = @gcc
 NAME = libftprintf.a
 
 SRCS += ./src/ft_printf.c
@@ -38,13 +59,17 @@ INC += ./inc/ft_printf.h
 
 OBJ = $(SRCS:.c=.o)
 
+
 all: $(NAME)
 
 $(NAME): $(OBJ) $(INC)
-	ar -rc $(NAME) $(OBJ)
-	ranlib $(NAME)
+	@echo "$(BLUE)>>$(WHITE) Building $(NAME) $(BLUE)<<$(WHITE)"
+	@ar -rc $(NAME) $(OBJ)
+	@ranlib $(NAME)
+	@echo "$(GREEN)SUCCESS$(WHITE)"
 
-.PHONY: clean
+.PHONY: clean fclean
+
 clean:
 	rm -rf $(OBJ)
 
